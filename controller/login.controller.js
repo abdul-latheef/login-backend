@@ -49,9 +49,37 @@ export const getUsers = async(req, res) => {
 
 }
 
+export const getAllUsersName = async(req, res) => {
+
+    try {
+        const getAllUsersName = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true
+            }
+        });
+        res.status(200).json({
+            message: "Users fetch successfully",
+            data: getAllUsersName
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: "An error occurred while fetching the users.",
+            error: error.message,
+        })
+    }finally {
+        await prisma.$disconnect();
+    }
+
+}
+
+
+
 export const getUserByUserName = async(req, res) => {
 
-    const {userName} = req.params;
+    const {userName} = req.body;
+    
 
     try {
         const getUserByName = await prisma.user.findUnique({
@@ -62,6 +90,7 @@ export const getUserByUserName = async(req, res) => {
 
         if(getUserByName)
         {
+            console.log(userName)
             res.status(200).json({
                 message: "User fetched successfully",
                 data: getUserByName
